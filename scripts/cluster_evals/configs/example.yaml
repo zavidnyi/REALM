@@ -25,3 +25,4 @@ slurm:
 
 base_port: 8000
 debug: false
+record_video: true

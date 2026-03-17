@@ -40,6 +40,7 @@ EXTRA_POLICY_ARGS=$(_yaml_get "policy.extra_args")
 
 REPEATS=$(_yaml_get "eval.repeats")
 MAX_STEPS=$(_yaml_get "eval.max_steps")
+RECORD_VIDEO=$(_yaml_get "record_video")
 
 # ---------------------------------------------------------------------------
 
@@ -80,6 +81,8 @@ else
   MODEL_NAME=$(basename "$(dirname "${CLEAN_PATH%/}")")_$(basename "${CLEAN_PATH%/}")
 fi
 
+RECORD_VIDEO="${RECORD_VIDEO:-true}"
+
 apptainer exec \
   --userns \
   --nv \
@@ -110,4 +113,5 @@ apptainer exec \
   --model "$MODEL_NAME" \
   --port "$PORT" \
   --run_id "$RUN_ID" \
-  --experiment_name "$EXPERIMENT_NAME"
+  --experiment_name "$EXPERIMENT_NAME" \
+  --record_video "$RECORD_VIDEO"
