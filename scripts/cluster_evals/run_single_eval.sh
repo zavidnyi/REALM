@@ -60,10 +60,10 @@ if [ "$DEBUG" = "false" ]; then
   # shellcheck disable=SC2086  # EXTRA_POLICY_ARGS is intentionally word-split
   uv run "$POLICY_SCRIPT" \
     --port="$PORT" \
+    $EXTRA_POLICY_ARGS \
     policy:checkpoint \
     --policy.config="$POLICY_CONFIG" \
-    --policy.dir="$CHECKPOINT_PATH" \
-    $EXTRA_POLICY_ARGS & SERVER_PID=$!
+    --policy.dir="$CHECKPOINT_PATH" & SERVER_PID=$!
   sleep 60
 fi
 
