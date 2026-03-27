@@ -9,7 +9,7 @@ import csv
 import omnigibson as og
 from omnigibson.macros import gm
 from realm.environments.realm_environment_dynamic import RealmEnvironmentDynamic
-from realm.inference import InferenceClient, extract_from_obs
+from realm.inference import InferenceClient, extract_from_obs, extract_images_from_obs, extract_proprio_from_obs
 from realm.logging import VideoRecorder, save_results_to_csv
 import time
 
@@ -153,8 +153,10 @@ def evaluate(
         drops = 0
         was_grasping = False
 
+        base_im, base_im_second, wrist_im = None, None, None
+
         while t < max_steps and terminal_steps > 0:
-            base_im, base_im_second, wrist_im, robot_state, gripper_state = extract_from_obs(obs)
+            robot_state, gripper_state = extract_proprio_from_obs(obs)
 
             # Metrics collection
             ee_pos, ee_rot = env.get_ee_pose()
@@ -183,6 +185,9 @@ def evaluate(
                 if not is_placed:
                     drops += 1
             was_grasping = is_grasping
+
+            if action_buffer.empty() or video_recorder is not None:
+                base_im, base_im_second, wrist_im = extract_images_from_obs(obs)
 
             if action_buffer.empty():
                 pred_action_chunk = client.infer(

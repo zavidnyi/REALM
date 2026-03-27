@@ -196,27 +196,30 @@ class RealmEnvironmentBase:
         ee_link = self.robot.links[ee_link_name]
         return ee_link.get_position_orientation()
 
+    def _build_collision_cache(self) -> None:
+        self._robot_adjacent_links = set()
+        if hasattr(self.robot, "joints"):
+            for joint in self.robot.joints.values():
+                b0 = joint.body0
+                b1 = joint.body1
+                if b0 and b1:
+                    self._robot_adjacent_links.add(frozenset((b0, b1)))
+        self._robot_links = list(self.robot.links.values())
+        self._robot_link_paths = set(l.prim_path for l in self._robot_links)
+        self._robot_prim_path = self.robot.prim_path
+        self._ignore_obj_roots = [obj.prim_path for obj in self.main_objects + self.target_objects]
+
     def check_collisions(self):
         self_collision = False
         env_collision = False
 
-        # Cache adjacent links to ignore self-collisions between connected bodies
-        if not hasattr(self, "_robot_adjacent_links"):
-            self._robot_adjacent_links = set()
-            if hasattr(self.robot, "joints"):
-                for joint in self.robot.joints.values():
-                    b0 = joint.body0
-                    b1 = joint.body1
-                    if b0 and b1:
-                        self._robot_adjacent_links.add(frozenset((b0, b1)))
+        if not hasattr(self, "_robot_link_paths"):
+            self._build_collision_cache()
 
-        robot_links = list(self.robot.links.values())
-        robot_link_paths = set(l.prim_path for l in robot_links)
-        robot_prim_path = self.robot.prim_path
-
-        # Objects to ignore for environment collision (manipulation targets)
-        # We use prefixes to catch links and geoms belonging to these objects
-        ignore_obj_roots = [obj.prim_path for obj in self.main_objects + self.target_objects]
+        robot_links = self._robot_links
+        robot_link_paths = self._robot_link_paths
+        robot_prim_path = self._robot_prim_path
+        ignore_obj_roots = self._ignore_obj_roots
 
         for link in robot_links:
             # Skip root link (usually touching mount/floor)
