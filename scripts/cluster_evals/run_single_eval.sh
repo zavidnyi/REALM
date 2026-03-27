@@ -51,7 +51,7 @@ export HUGGINGFACE_HUB_CACHE=$REALM_ROOT/hf_cache
 [[ -d "$HF_HOME" ]] || mkdir -p "$HF_HOME"
 
 export XDG_CACHE_HOME=$REALM_ROOT/python_cache
-export XLA_PYTHON_CLIENT_MEM_FRACTION=0.25
+export XLA_PYTHON_CLIENT_MEM_FRACTION=0.5
 
 POLICY_SCRIPT="${POLICY_RUN_DIR}/scripts/serve_policy.py"
 
@@ -82,6 +82,10 @@ else
 fi
 
 RECORD_VIDEO="${RECORD_VIDEO:-true}"
+
+LOG_DIR_HOST="$REALM_ROOT/logs/$EXPERIMENT_NAME"
+mkdir -p "$LOG_DIR_HOST"
+cp "$CONFIG" "$LOG_DIR_HOST/eval_config.yaml"
 
 apptainer exec \
   --userns \
@@ -114,4 +118,5 @@ apptainer exec \
   --port "$PORT" \
   --run_id "$RUN_ID" \
   --experiment_name "$EXPERIMENT_NAME" \
+  --log_dir "/app/logs/$EXPERIMENT_NAME" \
   --record_video "$RECORD_VIDEO"

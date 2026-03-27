@@ -20,9 +20,6 @@ if __name__ == "__main__":
     assert args.model is not None
     assert args.experiment_name is not None
     log_dir = args.log_dir if args.log_dir is not None else "/app/logs"
-    log_dir += f"/{args.experiment_name}"
-    log_dir += f"/{args.model}"
-    log_dir += f"/{args.run_id}" if args.run_id is not None else ""
 
     evaluate(
         task_id=args.task_id,
