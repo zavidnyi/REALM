@@ -57,12 +57,6 @@ POLICY_SCRIPT="${POLICY_RUN_DIR}/scripts/serve_policy.py"
 
 if [ "$DEBUG" = "false" ]; then
   cd "$POLICY_RUN_DIR"
-  if echo "$EXTRA_POLICY_ARGS" | grep -q "policy:"; then
-    echo "ERROR: policy.extra_args must not contain 'policy:checkpoint' or '--policy.*'." >&2
-    echo "       Set policy.config and policy.checkpoint_path in the YAML instead." >&2
-    exit 1
-  fi
-  echo "serve_policy cmd: uv run $POLICY_SCRIPT --port=$PORT $EXTRA_POLICY_ARGS policy:checkpoint --policy.config=$POLICY_CONFIG --policy.dir=$CHECKPOINT_PATH"
   # shellcheck disable=SC2086  # EXTRA_POLICY_ARGS is intentionally word-split
   uv run "$POLICY_SCRIPT" \
     --port="$PORT" \
@@ -91,7 +85,7 @@ RECORD_VIDEO="${RECORD_VIDEO:-true}"
 
 LOG_DIR_HOST="$REALM_ROOT/logs/$EXPERIMENT_NAME"
 mkdir -p "$LOG_DIR_HOST"
-cp -n "$CONFIG" "$LOG_DIR_HOST/eval_config.yaml"
+cp -n "$CONFIG" "$LOG_DIR_HOST/eval_config.yaml" || true
 
 apptainer exec \
   --userns \
