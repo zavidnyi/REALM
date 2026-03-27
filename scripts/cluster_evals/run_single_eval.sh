@@ -60,10 +60,10 @@ if [ "$DEBUG" = "false" ]; then
   # shellcheck disable=SC2086  # EXTRA_POLICY_ARGS is intentionally word-split
   uv run "$POLICY_SCRIPT" \
     --port="$PORT" \
-    $EXTRA_POLICY_ARGS \
     policy:checkpoint \
     --policy.config="$POLICY_CONFIG" \
-    --policy.dir="$CHECKPOINT_PATH" & SERVER_PID=$!
+    --policy.dir="$CHECKPOINT_PATH" \
+    $EXTRA_POLICY_ARGS & SERVER_PID=$!
   sleep 60
 fi
 
@@ -85,7 +85,7 @@ RECORD_VIDEO="${RECORD_VIDEO:-true}"
 
 LOG_DIR_HOST="$REALM_ROOT/logs/$EXPERIMENT_NAME"
 mkdir -p "$LOG_DIR_HOST"
-cp "$CONFIG" "$LOG_DIR_HOST/eval_config.yaml"
+cp -n "$CONFIG" "$LOG_DIR_HOST/eval_config.yaml"
 
 apptainer exec \
   --userns \
