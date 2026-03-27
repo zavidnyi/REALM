@@ -21,15 +21,17 @@ if __name__ == "__main__":
     assert args.experiment_name is not None
     log_dir = args.log_dir if args.log_dir is not None else "/app/logs"
 
-    evaluate(
-        task_id=args.task_id,
-        perturbation_id=args.perturbation_id,
-        repeats=args.repeats,
-        max_steps=args.max_steps,
-        model=args.model,
-        port=args.port,
-        log_dir=log_dir,
-        record_video=args.record_video,
-    )
-    og.shutdown()
+    try:
+        evaluate(
+            task_id=args.task_id,
+            perturbation_id=args.perturbation_id,
+            repeats=args.repeats,
+            max_steps=args.max_steps,
+            model=args.model,
+            port=args.port,
+            log_dir=log_dir,
+            record_video=args.record_video,
+        )
+    finally:
+        og.shutdown()
     sys.exit(0)
